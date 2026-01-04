@@ -9,10 +9,26 @@ import React, { useState } from "react";
 import pets, { Pet } from "@/data/pets";
 import PetItem from "./PetItem";
 
+import { useQuery } from "@tanstack/react-query";
+import { getAllPets } from "../api/pets";
+
 const PetList = () => {
   const [search, setSearch] = useState("");
   const [type, setType] = useState("");
+
+  const {
+    data: pets,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["pets"],
+    queryFn: getAllPets,
+  });
+
   const [displayPets, setDisplayPets] = useState(pets);
+
+  if (isLoading) return <Text>Loading pets... 🐾</Text>;
+  if (isError) return <Text>Error loading pets 😢</Text>;
 
   const petList = displayPets
     .filter((pet: Pet) => pet.name.toLowerCase().includes(search.toLowerCase()))
